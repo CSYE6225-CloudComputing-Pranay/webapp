@@ -17,15 +17,12 @@ func main() {
 }
 
 func loadEnv() {
-	//err := godotenv.Load(".env")
-	//if err != nil {
-	//	log.Fatal("Error loading .env file", err)
-	//}
-	err := godotenv.Load(".env.local")
+	err := godotenv.Load(".env.local", ".env")
 	if err != nil {
-		log.Fatal("Error loading .env file", err)
+		log.Print(".env files not found", err)
+	} else {
+		log.Print("Environment variables loaded successfully!!")
 	}
-	log.Print("Environment variables loaded successfully!!")
 }
 
 func loadDatabaseScripts() {
