@@ -33,6 +33,8 @@ jobs:
         run: go version
       - name: Install dependencies
         run: go get -u -d ./...
+      - name: Install test dependencies
+        run: go mod tidy
         env:
           DB_USER: root
           DB_PASSWORD: root
