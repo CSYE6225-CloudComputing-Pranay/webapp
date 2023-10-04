@@ -30,6 +30,6 @@ A project for the course "Network structures and cloud computing" that is writte
     - gorm.io/gorm v1.25.4
 - Run "go mod tidy" command from project directory to make sure that the dependencies are properly installed
 - Run "go build webapp/cmd/main" command from project directory to build the project
-- Run "cd ./test | go test -run TestHealthTestSuite" command from project directory to run the integration test
+- Run "cd ./test ; go test -run TestHealthTestSuite ; cd .." command from project directory to run the integration test
 - Now, run "go run webapp/cmd/main" command from project directory to deploy the project
 
