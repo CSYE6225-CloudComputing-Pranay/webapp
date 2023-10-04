@@ -38,6 +38,8 @@ jobs:
         env:
           DB_USER: root
           DB_PASSWORD: root
+      - name: Build project
+        run: go build webapp/cmd/main
       - name: Running healthz integration test
         run: |
           cd ./test
