@@ -29,7 +29,7 @@ func (s *HealthTestSuite) SetupSuite() {
 }
 
 func loadEnv() {
-	err := godotenv.Load(".env.local", ".env")
+	err := godotenv.Load("../.env.local", "../.env")
 	if err != nil {
 		log.Print(".env files not found", err)
 	} else {
