@@ -44,7 +44,7 @@ jobs:
         run: |
           cd ./test
           ls -l
-          go test -run TestIntegrationHealth
+          go test -run TestHealthTestSuite
         env:
           DB_HOST: localhost
           DB_PORT: 3306
