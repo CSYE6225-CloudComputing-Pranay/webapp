@@ -41,10 +41,7 @@ jobs:
       - name: Build project
         run: go build webapp/cmd/main
       - name: Running healthz integration test
-        run: |
-          cd ./test
-          ls -l
-          go test -run TestHealthTestSuite
+        run: cd ./test | go test -run TestHealthTestSuite
         env:
           DB_HOST: localhost
           DB_PORT: 3306
