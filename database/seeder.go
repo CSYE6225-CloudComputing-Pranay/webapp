@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"log"
 	"os"
 )
 
@@ -40,8 +39,6 @@ func LoadDataFromFile(db *gorm.DB, fileName string) error {
 		user := Account{
 			Email: email,
 		}
-
-		log.Print(user)
 
 		if err := db.First(&user, "email=?", email).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {

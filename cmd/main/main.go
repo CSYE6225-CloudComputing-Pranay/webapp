@@ -19,7 +19,7 @@ func main() {
 func loadEnv() {
 	err := godotenv.Load(".env.local", ".env")
 	if err != nil {
-		log.Print(".env files not found", err)
+		log.Print(".env files not found: ", err)
 	} else {
 		log.Print("Environment variables loaded successfully!!")
 	}
@@ -33,12 +33,12 @@ func loadDatabaseScripts() {
 	}
 	migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{})
 	if migrationError != nil {
-		log.Print("Error while running auto migrate on the database", migrationError)
+		log.Print("Error while running auto migrate on the database: ", migrationError)
 	}
 
 	fileError := database.LoadDataFromFile(database.Database, os.Getenv("FILE_PATH"))
 	if fileError != nil {
-		log.Fatal("Error loading database scripts", fileError)
+		log.Println("Error loading database scripts: ", fileError)
 	}
 	log.Print("Database scripts loaded successfully!!")
 }

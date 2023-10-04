@@ -31,7 +31,7 @@ func (s *HealthTestSuite) SetupSuite() {
 func loadEnv() {
 	err := godotenv.Load("../.env.local", "../.env")
 	if err != nil {
-		log.Print(".env files not found", err)
+		log.Print(".env files not found: ", err)
 	} else {
 		log.Print("Environment variables loaded successfully!!")
 	}
