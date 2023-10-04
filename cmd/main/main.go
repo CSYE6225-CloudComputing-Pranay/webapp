@@ -12,7 +12,7 @@ import (
 
 func main() {
 	loadEnv()
-	loadDatabaseScripts()
+	setupDatabase()
 	serveApplication()
 }
 
@@ -25,22 +25,24 @@ func loadEnv() {
 	}
 }
 
-func loadDatabaseScripts() {
+func setupDatabase() {
 
 	_, connectionError := database.Connect()
 	if connectionError != nil {
-		log.Fatal("Error connecting to the database", connectionError)
+		log.Println("Error connecting to the database: ", connectionError)
+	} else {
+		migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{})
+		if migrationError != nil {
+			log.Fatal("Error while running auto migrate on the database: ", migrationError)
+		} else {
+			fileError := database.LoadDataFromFile(database.Database, os.Getenv("FILE_PATH"))
+			if fileError != nil {
+				log.Println("Error loading database scripts: ", fileError)
+			} else {
+				log.Print("Database scripts loaded successfully!!")
+			}
+		}
 	}
-	migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{})
-	if migrationError != nil {
-		log.Print("Error while running auto migrate on the database: ", migrationError)
-	}
-
-	fileError := database.LoadDataFromFile(database.Database, os.Getenv("FILE_PATH"))
-	if fileError != nil {
-		log.Println("Error loading database scripts: ", fileError)
-	}
-	log.Print("Database scripts loaded successfully!!")
 }
 
 func serveApplication() {

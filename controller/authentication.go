@@ -16,6 +16,12 @@ func BasicAuth() gin.HandlerFunc {
 		if ok {
 
 			var account database.Account
+
+			if _, err := database.Connect(); err != nil {
+				c.AbortWithStatus(http.StatusServiceUnavailable)
+				return
+			}
+
 			if err := database.Database.Where("email = ?", username).First(&account).Error; err != nil {
 				log.Print("Error while fetching the account, missing email: ", err)
 				c.AbortWithStatus(http.StatusUnauthorized)
