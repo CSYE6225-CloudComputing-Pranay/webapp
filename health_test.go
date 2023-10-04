@@ -1,4 +1,4 @@
-package controller
+package webapp
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http/httptest"
 	"testing"
+	"webapp/controller"
 )
 
 type HealthTestSuite struct {
@@ -23,19 +24,19 @@ func (s *HealthTestSuite) SetupSuite() {
 	loadEnv()
 
 	app := gin.New()
-	app.GET("/healthz", Health)
+	app.GET("/healthz", controller.Health)
 	s.App = app
 }
 
 func loadEnv() {
-	err := godotenv.Load(".env.test")
+	err := godotenv.Load(".env.local")
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
 	log.Print("Environment variables loaded successfully!!")
 }
 
-func (s *HealthTestSuite) TestHealthIntegrationTest() {
+func (s *HealthTestSuite) TestIntegrationHealth() {
 
 	req := httptest.NewRequest("GET", "/healthz", nil)
 	w := httptest.NewRecorder()
