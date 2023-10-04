@@ -18,6 +18,7 @@ A project for the course "Network structures and cloud computing" that is writte
     - DB_NAME: database name
     - DB_PORT: database port
     - PORT: Port to run the application
+    - FILE_PATH: Path of the file with users data
 - Install required dependencies using the following command:
     - go get {DEPENDECY_NAME}
 - Following are the required dependencies :

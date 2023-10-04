@@ -64,8 +64,6 @@ func GetAllAssignments(context *gin.Context) {
 
 	email := context.GetString("email")
 
-	log.Print("Found EMAIL")
-
 	database.Database.Find(&assignments, database.Assignment{AccountEmail: email})
 
 	for i := 0; i < len(assignments); i++ {
@@ -101,8 +99,6 @@ func GetAssignment(context *gin.Context) {
 		return
 	}
 
-	log.Println(assignment)
-
 	if assignment.AccountEmail != email {
 		context.Status(http.StatusForbidden)
 		return
@@ -133,7 +129,7 @@ func UpdateAssignment(context *gin.Context) {
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.Status(http.StatusBadRequest)
-		log.Print("error {}", err.Error())
+		log.Print("Bad Request: ", err.Error())
 		return
 	}
 
@@ -162,11 +158,9 @@ func UpdateAssignment(context *gin.Context) {
 		return
 	}
 
-	log.Print("Updating values")
-
 	if err := database.Database.Where(database.Assignment{ID: id}).Updates(&assignment).Error; err != nil {
 		context.Status(http.StatusServiceUnavailable)
-		log.Print("error: {}", err.Error())
+		log.Print("error: ", err.Error())
 		return
 	}
 

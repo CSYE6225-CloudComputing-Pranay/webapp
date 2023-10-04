@@ -16,20 +16,25 @@ func BasicAuth() gin.HandlerFunc {
 		if ok {
 
 			var account database.Account
+
+			if _, err := database.Connect(); err != nil {
+				c.AbortWithStatus(http.StatusServiceUnavailable)
+				return
+			}
+
 			if err := database.Database.Where("email = ?", username).First(&account).Error; err != nil {
-				log.Print("Error while fetching the account, missing email", err)
+				log.Print("Error while fetching the account, missing email: ", err)
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 
 			if err := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(password)); err != nil {
-				log.Print("Error while fetching the account, missing password", err)
+				log.Print("Error while fetching the account, missing password: ", err)
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 
 			c.Set("email", account.Email)
-			log.Print("email:{}", account.Email)
 			return
 		}
 
