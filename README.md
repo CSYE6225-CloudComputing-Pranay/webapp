@@ -6,9 +6,11 @@ A project for the course "Network structures and cloud computing" that is writte
 
 ## Prerequisites to build and deploy the application locally
 
-- Use the following link to install go on your machine, version: 1.21.x
+- Use the following link to get the steps to install go language on your machine, version: 1.21.x
     - https://go.dev/doc/install
 - Install mysql database, version: 5.7
+  - Use the following link to get the steps to install mysql on your machine
+    - https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/
 - Checkout the repository using the following link:
     - https://github.com/CSYE6225-CloudComputing-Pranay/webapp.git
 - Create a .env or .env.local file in the project directory and Configure the following parameters:

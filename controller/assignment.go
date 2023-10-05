@@ -128,8 +128,7 @@ func UpdateAssignment(context *gin.Context) {
 	}
 
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.Status(http.StatusBadRequest)
-		log.Print("Bad Request: ", err.Error())
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -147,9 +146,7 @@ func UpdateAssignment(context *gin.Context) {
 	}
 
 	if err := database.Database.Where("id=?", id).First(&record).Error; err != nil {
-		assignment.AccountEmail = email
-		database.Database.Create(&assignment)
-		context.Status(http.StatusNoContent)
+		context.Status(http.StatusNotFound)
 		return
 	}
 

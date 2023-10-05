@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -48,6 +49,8 @@ func setupDatabase() {
 func serveApplication() {
 	router := gin.Default()
 	router.Use(DefaultHeaders())
+
+	binding.EnableDecoderDisallowUnknownFields = true
 	router.HandleMethodNotAllowed = true
 
 	router.NoMethod(func(c *gin.Context) {
