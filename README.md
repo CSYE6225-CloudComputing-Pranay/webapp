@@ -4,7 +4,7 @@
 A project for the course "Network structures and cloud computing" that is written in Go language and build to be deployable in cloud platforms
 
 
-## Prerequisites to build and deploy the application locally
+## Prerequisites to build and deploy the application locally rishab
 
 - Use the following link to get the steps to install go language on your machine, version: 1.21.x
     - https://go.dev/doc/install
