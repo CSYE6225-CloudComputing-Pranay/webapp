@@ -39,7 +39,7 @@ func loadEnv() {
 
 func (s *HealthTestSuite) TestIntegrationHealth() {
 
-	req := httptest.NewRequest("GET", "/healthz", nil)
+	req := httptest.NewRequest("GET", "/health", nil)
 	w := httptest.NewRecorder()
 	s.App.ServeHTTP(w, req)
 
