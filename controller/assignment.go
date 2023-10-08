@@ -62,9 +62,7 @@ func GetAllAssignments(context *gin.Context) {
 	var assignments []database.Assignment
 	var assignmentResponses = make([]AssignmentResponse, 0)
 
-	email := context.GetString("email")
-
-	database.Database.Find(&assignments, database.Assignment{AccountEmail: email})
+	database.Database.Find(&assignments)
 
 	for i := 0; i < len(assignments); i++ {
 		assignmentResponses = append(assignmentResponses, AssignmentResponse{
@@ -92,15 +90,9 @@ func GetAssignment(context *gin.Context) {
 	}
 
 	id := context.Param("assignmentID")
-	email := context.GetString("email")
 
 	if err := database.Database.Where("id=?", id).First(&assignment).Error; err != nil {
 		context.Status(http.StatusNotFound)
-		return
-	}
-
-	if assignment.AccountEmail != email {
-		context.Status(http.StatusForbidden)
 		return
 	}
 
