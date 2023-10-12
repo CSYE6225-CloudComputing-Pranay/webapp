@@ -10,9 +10,10 @@ type AccountRequest struct {
 }
 
 type AssignmentRequest struct {
+	ID                string    `json:"id"`
 	Name              string    `json:"name" binding:"required"`
-	Points            int       `json:"points" validate:"max=100,min=1" binding:"required"`
-	NumOfAttempts     int       `json:"num_of_attempts" validate:"max=10,min=1" binding:"required"`
+	Points            int       `json:"points" binding:"required,max=10,min=1"`
+	NumOfAttempts     int       `json:"num_of_attempts" binding:"required,max=100,min=1"`
 	Deadline          time.Time `json:"deadline" binding:"required"`
 	AssignmentCreated time.Time `json:"assignment_created"`
 	AssignmentUpdated time.Time `json:"assignment_updated"`

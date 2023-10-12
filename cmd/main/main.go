@@ -76,4 +76,5 @@ func serveApplication() {
 	if err != nil {
 		log.Fatal("Error occurred while running starting server with Gin Framework", err)
 	}
+
 }
