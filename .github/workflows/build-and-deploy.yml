@@ -36,9 +36,9 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
       - name: Build project
-        run: go build webapp/cmd/assessment-application
+        run: env GOOS=linux GOARCH=amd64 go build webapp/cmd/assessment-application
       - name: Running healthz integration test
-        run: cd ./test ; go test -run TestHealthTestSuite ; cd ..
+        run: cd ./test ; env GOOS=linux GOARCH=amd64 go test -run TestHealthTestSuite ; cd ..
         env:
           DB_HOST: localhost
           DB_PORT: 3306
@@ -50,7 +50,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION }}
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
       - name: Run `packer init`
@@ -66,6 +66,6 @@ jobs:
         run: "packer validate ./aws-debian.pkr.hcl"
 
       - name: Build Artifact
-        run: "packer build -color=false -on-error=abort  ./aws-debian.pkr.hcl"
+        run: "packer build -var-file=aws-debian.auto.pkrvars.hcl -color=false -on-error=abort ./aws-debian.pkr.hcl"
 
 
