@@ -14,10 +14,10 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: cloud
+          MYSQL_ROOT_PASSWORD: ${{ var.DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ var.DB_NAME }}
         ports:
-          - 3306:3306
+          - ${{ var.DB_PORT }}:${{ var.DB_PORT }}
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout repository code
@@ -32,19 +32,16 @@ jobs:
         run: go get -u -d ./...
       - name: Install test dependencies
         run: go mod tidy
-        env:
-          DB_USER: root
-          DB_PASSWORD: root
       - name: Build project
         run: env GOOS=linux GOARCH=amd64 go build webapp/cmd/assessment-application
       - name: Running healthz integration test
         run: cd ./test ; env GOOS=linux GOARCH=amd64 go test -run TestHealthTestSuite ; cd ..
         env:
-          DB_HOST: localhost
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: cloud
+          DB_HOST: ${{ var.DB_HOST }}
+          DB_PORT: ${{ var.DB_PORT }}
+          DB_USER: ${{ var.DB_USER_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ var.DB_NAME }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
