@@ -18,9 +18,9 @@ func main() {
 }
 
 func loadEnv() {
-	err := godotenv.Load(".env.local", ".env")
+	err := godotenv.Load()
 	if err != nil {
-		log.Print(".env files not found: ", err)
+		log.Print("error while fetching default environment variables: ", err)
 	} else {
 		log.Print("Environment variables loaded successfully!!")
 	}
