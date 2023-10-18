@@ -15,9 +15,9 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ var.DB_NAME }}
+          MYSQL_DATABASE: ${{ vars.DB_NAME }}
         ports:
-          - ${{ var.DB_PORT }}:${{ var.DB_PORT }}
+          - ${{ vars.DB_PORT }}:${{ vars.DB_PORT }}
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout repository code
@@ -37,11 +37,11 @@ jobs:
       - name: Running healthz integration test
         run: cd ./test ; go test -run TestHealthTestSuite ; cd ..
         env:
-          DB_HOST: ${{ var.DB_HOST }}
-          DB_PORT: ${{ var.DB_PORT }}
-          DB_USER: ${{ var.DB_USER_NAME }}
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_USER: ${{ vars.DB_USER_NAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ var.DB_NAME }}
+          DB_NAME: ${{ vars.DB_NAME }}
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
       - name: Run `packer init`
