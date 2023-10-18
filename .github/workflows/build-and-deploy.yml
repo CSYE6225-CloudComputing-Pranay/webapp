@@ -14,10 +14,12 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: cloud
+          MYSQL_DATABASE: ${{ vars.DB_NAME }}
+          MYSQL_USER: ${{ vars.DB_USER_NAME }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
         ports:
-          - 3306:3306
+          - ${{ vars.DB_PORT }}:${{ vars.DB_PORT }}
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout repository code
@@ -32,25 +34,22 @@ jobs:
         run: go get -u -d ./...
       - name: Install test dependencies
         run: go mod tidy
-        env:
-          DB_USER: root
-          DB_PASSWORD: root
       - name: Build project
-        run: go build webapp/cmd/assessment-application
+        run: env GOOS=linux GOARCH=amd64 go build webapp/cmd/assessment-application
       - name: Running healthz integration test
-        run: cd ./test ; go test -run TestHealthTestSuite ; cd ..
+        run: cd ./test ; env GOOS=linux GOARCH=amd64 go test -run TestHealthTestSuite ; cd ..
         env:
-          DB_HOST: localhost
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: cloud
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_USER: ${{ vars.DB_USER_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ vars.DB_NAME }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ vars.AWS_REGION }}
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
       - name: Run `packer init`
@@ -63,9 +62,9 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate ./aws-debian.pkr.hcl"
+        run: "packer validate -var-file=aws-debian.auto.pkrvars.hcl ./aws-debian.pkr.hcl"
 
       - name: Build Artifact
-        run: "packer build -color=false -on-error=abort  ./aws-debian.pkr.hcl"
+        run: "packer build -var-file=aws-debian.auto.pkrvars.hcl -color=false -on-error=abort ./aws-debian.pkr.hcl"
 
 
