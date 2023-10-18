@@ -57,6 +57,6 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate ./aws-debian.pkr.hcl"
+        run: "packer validate -var-file=aws-debian.auto.pkrvars.hcl ./aws-debian.pkr.hcl"
 
 
