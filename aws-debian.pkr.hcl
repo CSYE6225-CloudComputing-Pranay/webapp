@@ -24,7 +24,6 @@ variable volume_type {}
 variable "file_paths" {}
 variable destination_path {}
 variable script_path {}
-#variable "shell_environment_vars" {}
 variable "db_user" {}
 variable "db_password" {}
 
