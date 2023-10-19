@@ -66,5 +66,8 @@ jobs:
 
       - name: Build Artifact
         run: "packer build -var-file=aws-debian.auto.pkrvars.hcl -color=false -on-error=abort ./aws-debian.pkr.hcl"
+        env:
+          PKR_VAR_DB_USER: ${{ vars.DB_USER_NAME }}
+          PKR_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
 

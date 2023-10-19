@@ -24,7 +24,9 @@ variable volume_type {}
 variable "file_paths" {}
 variable destination_path {}
 variable script_path {}
-variable "shell_environment_vars" {}
+#variable "shell_environment_vars" {}
+variable "db_user" {}
+variable "db_password" {}
 
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
@@ -66,8 +68,12 @@ build {
   }
 
   provisioner "shell" {
-    environment_vars = var.shell_environment_vars
-    script           = var.script_path
+    environment_vars = ["DEBIAN_FRONTEND=noninteractive",
+      "CHECKPOINT_DISABLE=1",
+      "DB_USER=${var.db_user}",
+      "DB_PASSWORD=${var.db_password}"
+    ]
+    script = var.script_path
   }
 }
 

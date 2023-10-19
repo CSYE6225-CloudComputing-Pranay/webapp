@@ -3,11 +3,10 @@ region    = "us-east-1"
 subnet_id = "subnet-0ba56c90b74d73fd5"
 
 ### Variables for EC2 instance creation
-file_paths             = ["./assessment-application", "./build/package/users.csv"]
-script_path            = "./build/package/setup.sh"
-destination_path       = "/tmp/"
-ssh_username           = "admin"
-shell_environment_vars = ["DEBIAN_FRONTEND=noninteractive", "CHECKPOINT_DISABLE=1"]
+file_paths       = ["./assessment-application", "./build/package/users.csv"]
+script_path      = "./build/package/setup.sh"
+destination_path = "/tmp/"
+ssh_username     = "admin"
 
 ### Variables for AMI creation
 ami_name      = "csye6225-debian-instance-ami"
