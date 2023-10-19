@@ -56,6 +56,6 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate -var 'DB_USER: ${{ vars.DB_USER_NAME }}' -var 'DB_PASSWORD: ${{ secrets.DB_PASSWORD }}'  -var-file=aws-debian.auto.pkrvars.hcl ./aws-debian.pkr.hcl"
+        run: "packer validate -var 'DB_USER=${{ vars.DB_USER_NAME }}' -var 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}'  -var-file=aws-debian.auto.pkrvars.hcl ./aws-debian.pkr.hcl"
 
 
