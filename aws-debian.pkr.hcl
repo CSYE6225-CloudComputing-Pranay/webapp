@@ -49,7 +49,7 @@ source "amazon-ebs" "debian_ami" {
   ssh_username = var.ssh_username
 
   launch_block_device_mappings {
-    device_name           = var.device_name
+            device_name           = var.device_name
     delete_on_termination = true
     volume_size           = var.volume_size
     volume_type           = var.volume_type
