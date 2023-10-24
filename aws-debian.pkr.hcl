@@ -44,7 +44,7 @@ source "amazon-ebs" "debian_ami" {
       virtualization-type = var.source_ami_virtualization_type
     }
     most_recent = true
-    owners      = var.source_ami_owners
+      owners      = var.source_ami_owners
   }
   ssh_username = var.ssh_username
 
