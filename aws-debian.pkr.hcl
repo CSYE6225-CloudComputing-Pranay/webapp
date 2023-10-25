@@ -60,7 +60,7 @@ build {
   name    = "build-packer"
   sources = ["source.amazon-ebs.debian_ami"]
 
-  provisioner "file" 
+  provisioner "file" {
     sources     = var.file_paths
     destination = var.destination_path
   }
