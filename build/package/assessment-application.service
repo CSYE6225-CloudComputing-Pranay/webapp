@@ -1,0 +1,19 @@
+[Unit]
+Description= Assessment application
+ConditionPathExists=/opt/app/assessment-application
+Requires=cloud-init.service
+After=cloud-final.service
+
+[Service]
+Type=simple
+User=webapp
+Group=csye6225
+WorkingDirectory=/opt/app
+ExecStart=/opt/app/assessment-application
+Restart=always
+RestartSec=5s
+TimeoutSec=10s
+EnvironmentFile=/opt/app/.env
+
+[Install]
+WantedBy=cloud-init.target
