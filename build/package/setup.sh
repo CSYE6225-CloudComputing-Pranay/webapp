@@ -21,6 +21,10 @@ sudo mv /tmp/users.csv /opt/
 sudo mv /tmp/assessment-application /opt/app/
 sudo mv /tmp/assessment-application.service /etc/systemd/system/
 
+sudo mkdir /opt/app/log
+sudo touch /opt/app/stdout.log
+sudo chown webapp:csye6225 /opt/app/log
+sudo chown webapp:csye6225 /opt/app/log/stdout.log
 ###############################################################################################################################
 
 ######################################################### Golang Setup ########################################################

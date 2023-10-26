@@ -15,5 +15,9 @@ RestartSec=5s
 TimeoutSec=10s
 EnvironmentFile=/opt/app/.env
 
+StandardOutput=append:/opt/app/log/stdout.log
+StandardError=append:/opt/app/log/stdout.log
+
+
 [Install]
 WantedBy=cloud-init.target
