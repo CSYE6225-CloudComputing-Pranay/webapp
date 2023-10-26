@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"log"
 	"net/http"
+	"time"
 	"webapp/database"
 )
 
@@ -19,6 +20,11 @@ func CreateAssignment(context *gin.Context) {
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if time.Now().After(request.Deadline) {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Deadline is a past date"})
 		return
 	}
 
@@ -121,6 +127,11 @@ func UpdateAssignment(context *gin.Context) {
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if time.Now().After(request.Deadline) {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Deadline is a past date"})
 		return
 	}
 

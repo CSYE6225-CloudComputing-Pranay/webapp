@@ -24,7 +24,7 @@ func Connect() (*gorm.DB, error) {
 
 	_ = database.Exec("CREATE DATABASE IF NOT EXISTS " + databaseName + ";")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", username, password, host, port, databaseName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&timeout=5s", username, password, host, port, databaseName)
 	Database, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
