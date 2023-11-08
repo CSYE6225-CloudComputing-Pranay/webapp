@@ -44,6 +44,7 @@ jobs:
           DB_USER: ${{ vars.DB_USER_NAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ vars.DB_NAME }}
+          LOG_FILE_PATH: assessment-application.log
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
       - name: Run `packer init`

@@ -3,7 +3,7 @@ region    = "us-east-1"
 subnet_id = "subnet-0ba56c90b74d73fd5"
 
 ### Variables for EC2 instance creation
-file_paths             = ["./assessment-application", "./build/package/users.csv", "./build/package/assessment-application.service"]
+file_paths             = ["./assessment-application", "./build/package/users.csv", "./build/package/assessment-application.service", "./build/package/amazon-cloudwatch-agent.json"]
 script_path            = "./build/package/setup.sh"
 destination_path       = "/tmp/"
 ssh_username           = "admin"

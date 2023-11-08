@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 	"webapp/controller"
+	"webapp/logger"
 )
 
 type HealthTestSuite struct {
@@ -22,6 +23,8 @@ func TestHealthTestSuite(t *testing.T) {
 func (s *HealthTestSuite) SetupSuite() {
 
 	loadEnv()
+	logger.InitLogger()
+	logger.InitMetrics()
 
 	app := gin.New()
 	app.GET("/healthz", controller.Health)
@@ -29,7 +32,7 @@ func (s *HealthTestSuite) SetupSuite() {
 }
 
 func loadEnv() {
-	err := godotenv.Load("../.env.local", "../.env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Print(".env files not found: ", err)
 	} else {

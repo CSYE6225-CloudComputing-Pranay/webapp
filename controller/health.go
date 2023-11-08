@@ -4,9 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"webapp/database"
+	"webapp/logger"
 )
 
 func Health(context *gin.Context) {
+
+	logger.GetMetricsClient().Incr("assignment.health", 1)
 
 	var writer = context.Writer
 

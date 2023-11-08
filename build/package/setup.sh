@@ -22,9 +22,13 @@ sudo mv /tmp/assessment-application /opt/app/
 sudo mv /tmp/assessment-application.service /etc/systemd/system/
 
 sudo mkdir /opt/app/log
-sudo touch /opt/app/stdout.log
+sudo touch /opt/app/log/stdout.log
 sudo chown webapp:csye6225 /opt/app/log
 sudo chown webapp:csye6225 /opt/app/log/stdout.log
+sudo mkdir /var/log/webapp
+sudo touch /var/log/webapp/assessment-application.log
+sudo chown webapp:csye6225 /var/log/webapp
+sudo chown webapp:csye6225 /var/log/webapp/assessment-application.log
 ###############################################################################################################################
 
 ######################################################### Golang Setup ########################################################
@@ -54,6 +58,17 @@ echo "export PATH=\$PATH:\$GOROOT/bin:\$GOPATH/bin" >> ~/.bashrc
 
 # Load the updated environment variables
 source ~/.bashrc
+
+###############################################################################################################################
+
+######################################################### Cloud watch Setup ###################################################
+
+###############################################################################################################################
+
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+sudo mv /tmp/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/
 
 ###############################################################################################################################
 

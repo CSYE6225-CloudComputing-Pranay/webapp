@@ -3,17 +3,24 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
+	"io"
 	"log"
 	"net/http"
 	"time"
 	"webapp/database"
+	"webapp/logger"
 )
 
 func CreateAssignment(context *gin.Context) {
 
 	var request AssignmentRequest
 
+	logger.GetMetricsClient().Incr("assignment.create.record", 1)
+
 	if len(context.Request.URL.Query()) != 0 {
+		zap.L().Error("Request contains unwanted request query parameters", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery))
 		context.Status(http.StatusBadRequest)
 		return
 	}
@@ -60,7 +67,18 @@ func CreateAssignment(context *gin.Context) {
 
 func GetAllAssignments(context *gin.Context) {
 
+	logger.GetMetricsClient().Incr("assignment.fetch.records", 1)
+
 	if context.Request.Body != http.NoBody || len(context.Request.URL.Query()) != 0 {
+		requestBody, err := io.ReadAll(context.Request.Body)
+		defer context.Request.Body.Close()
+		if err != nil {
+			zap.L().Error("Error while closing the request body", zap.Error(err))
+			requestBody = []byte("Malformed request body")
+		}
+
+		zap.L().Error("Request contains unwanted request query parameters or body", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery), zap.ByteString("request-body", requestBody))
 		context.Status(http.StatusBadRequest)
 		return
 	}
@@ -88,9 +106,19 @@ func GetAllAssignments(context *gin.Context) {
 
 func GetAssignment(context *gin.Context) {
 
+	logger.GetMetricsClient().Incr("assignment.fetch.record", 1)
+
 	var assignment database.Assignment
 
 	if context.Request.Body != http.NoBody || len(context.Request.URL.Query()) != 0 {
+		requestBody, err := io.ReadAll(context.Request.Body)
+		defer context.Request.Body.Close()
+		if err != nil {
+			zap.L().Error("Error while closing the request body", zap.Error(err))
+			requestBody = []byte("Malformed request body")
+		}
+		zap.L().Error("Request contains unwanted request query parameters or body", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery), zap.ByteString("request-body", requestBody))
 		context.Status(http.StatusBadRequest)
 		return
 	}
@@ -118,9 +146,13 @@ func GetAssignment(context *gin.Context) {
 
 func UpdateAssignment(context *gin.Context) {
 
+	logger.GetMetricsClient().Incr("assignment.update.record", 1)
+
 	var request AssignmentRequest
 
 	if len(context.Request.URL.Query()) != 0 {
+		zap.L().Error("Request contains unwanted request query parameters", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery))
 		context.Status(http.StatusBadRequest)
 		return
 	}
@@ -170,9 +202,19 @@ func UpdateAssignment(context *gin.Context) {
 
 func DeleteAssignment(context *gin.Context) {
 
+	logger.GetMetricsClient().Incr("assignment.delete.record", 1)
+
 	var assignment database.Assignment
 
 	if context.Request.Body != http.NoBody || len(context.Request.URL.Query()) != 0 {
+		requestBody, err := io.ReadAll(context.Request.Body)
+		defer context.Request.Body.Close()
+		if err != nil {
+			requestBody = []byte("Malformed request body")
+			zap.L().Error("Error while closing the request body", zap.Error(err))
+		}
+		zap.L().Error("Request contains unwanted request query parameters or body", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery), zap.ByteString("request-body", requestBody))
 		context.Status(http.StatusBadRequest)
 		return
 	}
