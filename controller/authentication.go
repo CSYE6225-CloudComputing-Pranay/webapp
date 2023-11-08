@@ -2,8 +2,8 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"webapp/database"
 )
@@ -18,27 +18,31 @@ func BasicAuth() gin.HandlerFunc {
 			var account database.Account
 
 			if _, err := database.Connect(); err != nil {
+				zap.L().Error("Error while connecting to database", zap.Error(err))
 				c.AbortWithStatus(http.StatusServiceUnavailable)
 				return
 			}
 
 			if err := database.Database.Where("email = ?", username).First(&account).Error; err != nil {
-				log.Print("Error while fetching the account, missing email: ", err)
+				zap.L().Error("Error while fetching the account, missing email", zap.Error(err))
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 
 			if err := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(password)); err != nil {
-				log.Print("Error while fetching the account, missing password: ", err)
+				zap.L().Error("Error while fetching the account, missing password", zap.Error(err))
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
+
+			zap.L().Info("User successfully authenticated", zap.String("user-mail", account.Email),
+				zap.String("userId", account.ID), zap.String("method", c.Request.Method), zap.String("path", c.Request.URL.Path))
 
 			c.Set("email", account.Email)
 			return
 		}
 
-		log.Print("Error while fetching the account, missing token")
+		zap.L().Error("Error while fetching the account, missing token")
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	})

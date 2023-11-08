@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -44,5 +45,17 @@ func DefaultHeaders() gin.HandlerFunc {
 		if c.Writer.Written() {
 			c.Writer.Header().Set("Content-Type", "application/json")
 		}
+	}
+}
+
+func LogRequestResponse() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+
+		zap.L().Info("Application has an incoming request", zap.String("request-method", c.Request.Method), zap.String("request-path", c.Request.URL.Path))
+
+		c.Next()
+
+		zap.L().Info("Application responded successfully", zap.String("request-method", c.Request.Method), zap.String("request-path", c.Request.URL.Path), zap.Int("response-status", c.Writer.Status()))
 	}
 }

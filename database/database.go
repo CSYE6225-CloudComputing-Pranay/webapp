@@ -2,9 +2,9 @@ package database
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 	"os"
 	"strconv"
 )
@@ -24,14 +24,15 @@ func Connect() (*gorm.DB, error) {
 
 	_ = database.Exec("CREATE DATABASE IF NOT EXISTS " + databaseName + ";")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&timeout=5s", username, password, host, port, databaseName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&timeout=5s&readTimeout=10s&writeTimeout=10s", username, password, host, port, databaseName)
+
 	Database, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Print("Database connection failed: ", err)
+		zap.L().Error("Database connection failed", zap.Error(err))
 		return database, err
 	} else {
-		log.Print("Successfully connected to the database")
+		zap.L().Info("Successfully connected to the database")
 		return database, nil
 	}
 }

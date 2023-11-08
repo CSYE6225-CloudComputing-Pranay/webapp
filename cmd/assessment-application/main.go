@@ -4,15 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/joho/godotenv"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"webapp/controller"
 	"webapp/database"
+	"webapp/logger"
 )
 
 func main() {
 	loadEnv()
+	log := logger.InitLogger()
+	client := logger.InitMetrics()
+	defer log.Sync()
+	defer client.Close()
 	setupDatabase()
 	serveApplication()
 }
@@ -20,9 +25,9 @@ func main() {
 func loadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Print("error while fetching default environment variables: ", err)
+		zap.L().Error("error while fetching default environment variables: ", zap.Error(err))
 	} else {
-		log.Print("Environment variables loaded successfully!!")
+		zap.L().Info("Environment variables loaded successfully!!")
 	}
 }
 
@@ -30,17 +35,17 @@ func setupDatabase() {
 
 	_, connectionError := database.Connect()
 	if connectionError != nil {
-		log.Println("Error connecting to the database: ", connectionError)
+		zap.L().Error("Error connecting to the database", zap.Error(connectionError))
 	} else {
 		migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{})
 		if migrationError != nil {
-			log.Fatal("Error while running auto migrate on the database: ", migrationError)
+			zap.L().Fatal("Error while running auto migrate on the database", zap.Error(migrationError))
 		} else {
 			fileError := database.LoadDataFromFile(database.Database, os.Getenv("FILE_PATH"))
 			if fileError != nil {
-				log.Println("Error loading database scripts: ", fileError)
+				zap.L().Warn("Error loading database scripts", zap.Error(fileError))
 			} else {
-				log.Print("Database scripts loaded successfully!!")
+				zap.L().Info("Database scripts loaded successfully!!")
 			}
 		}
 	}
@@ -48,7 +53,7 @@ func setupDatabase() {
 
 func serveApplication() {
 	router := gin.Default()
-	router.Use(DefaultHeaders())
+	router.Use(DefaultHeaders(), LogRequestResponse())
 
 	binding.EnableDecoderDisallowUnknownFields = true
 	router.HandleMethodNotAllowed = true
@@ -70,11 +75,11 @@ func serveApplication() {
 	privateRoutes.PUT("/:assignmentID", controller.UpdateAssignment)
 	privateRoutes.DELETE("/:assignmentID", controller.DeleteAssignment)
 
-	log.Print("Starting server with Gin framework")
+	zap.L().Info("Starting server with Gin framework")
 
 	err := router.Run()
 	if err != nil {
-		log.Fatal("Error occurred while running starting server with Gin Framework", err)
+		zap.L().Fatal("Error occurred while running starting server with Gin Framework", zap.Error(err))
 	}
 
 }
