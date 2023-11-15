@@ -24,15 +24,21 @@ func Connect() (*gorm.DB, error) {
 
 	_ = database.Exec("CREATE DATABASE IF NOT EXISTS " + databaseName + ";")
 
+	sqlDB, err := database.DB()
+	err = sqlDB.Close()
+	if err != nil {
+		zap.L().Error("Error occurred while closing database connection", zap.Error(err))
+	}
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&timeout=5s&readTimeout=10s&writeTimeout=10s", username, password, host, port, databaseName)
 
 	Database, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		zap.L().Error("Database connection failed", zap.Error(err))
-		return database, err
+		return Database, err
 	} else {
 		zap.L().Info("Successfully connected to the database")
-		return database, nil
+		return Database, nil
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 	"webapp/controller"
+	"webapp/database"
 	"webapp/logger"
 )
 
@@ -23,6 +24,10 @@ func TestHealthTestSuite(t *testing.T) {
 func (s *HealthTestSuite) SetupSuite() {
 
 	loadEnv()
+	_, err := database.Connect()
+	if err != nil {
+		return
+	}
 	logger.InitLogger()
 	logger.InitMetrics()
 
