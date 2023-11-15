@@ -17,7 +17,14 @@ func BasicAuth() gin.HandlerFunc {
 
 			var account database.Account
 
-			if _, err := database.Connect(); err != nil {
+			sqlDB, err := database.Database.DB()
+			if err != nil {
+				zap.L().Error("Error while connecting to database", zap.Error(err))
+				c.AbortWithStatus(http.StatusServiceUnavailable)
+				return
+			}
+
+			if err := sqlDB.Ping(); err != nil {
 				zap.L().Error("Error while connecting to database", zap.Error(err))
 				c.AbortWithStatus(http.StatusServiceUnavailable)
 				return

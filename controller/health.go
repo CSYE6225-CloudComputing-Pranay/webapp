@@ -18,7 +18,13 @@ func Health(context *gin.Context) {
 		return
 	}
 
-	if _, err := database.Connect(); err != nil {
+	sqlDB, err := database.Database.DB()
+	if err != nil {
+		writer.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+
+	if err := sqlDB.Ping(); err != nil {
 		writer.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
