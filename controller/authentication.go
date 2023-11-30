@@ -46,6 +46,7 @@ func BasicAuth() gin.HandlerFunc {
 				zap.String("userId", account.ID), zap.String("method", c.Request.Method), zap.String("path", c.Request.URL.Path))
 
 			c.Set("email", account.Email)
+			c.Set("accountID", account.ID)
 			return
 		}
 

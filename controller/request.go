@@ -18,3 +18,7 @@ type AssignmentRequest struct {
 	AssignmentCreated time.Time `json:"assignment_created"`
 	AssignmentUpdated time.Time `json:"assignment_updated"`
 }
+
+type SubmitRequest struct {
+	SubmissionURL string `json:"submission_url" binding:"required"`
+}

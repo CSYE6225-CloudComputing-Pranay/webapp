@@ -21,3 +21,11 @@ type AssignmentResponse struct {
 	AssignmentCreated time.Time `json:"assignment_created"`
 	AssignmentUpdated time.Time `json:"assignment_updated"`
 }
+
+type SubmissionResponse struct {
+	ID                string    `json:"id"`
+	AssignmentID      string    `json:"assignment_id"`
+	SubmissionURL     string    `json:"submission_url"`
+	SubmissionDate    time.Time `json:"submission_date"`
+	SubmissionUpdated time.Time `json:"submission_updated"`
+}
