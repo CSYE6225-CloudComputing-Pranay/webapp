@@ -37,7 +37,7 @@ func setupDatabase() {
 	if connectionError != nil {
 		zap.L().Error("Error connecting to the database", zap.Error(connectionError))
 	} else {
-		migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{})
+		migrationError := database.Database.AutoMigrate(&database.Account{}, &database.Assignment{}, &database.Submission{})
 		if migrationError != nil {
 			zap.L().Fatal("Error while running auto migrate on the database", zap.Error(migrationError))
 		} else {
@@ -74,6 +74,7 @@ func serveApplication() {
 	privateRoutes.GET("/:assignmentID", controller.GetAssignment)
 	privateRoutes.PUT("/:assignmentID", controller.UpdateAssignment)
 	privateRoutes.DELETE("/:assignmentID", controller.DeleteAssignment)
+	privateRoutes.POST("/:assignmentID/submission", controller.SubmitAssignment)
 
 	zap.L().Info("Starting server with Gin framework")
 

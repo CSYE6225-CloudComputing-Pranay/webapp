@@ -15,13 +15,24 @@ type Account struct {
 }
 
 type Assignment struct {
+	ID                string       `gorm:"<-:create; primaryKey; size:255; default:(uuid())"`
+	Name              string       `gorm:"not null; size:255"`
+	Points            int          `gorm:"not null; size:4"`
+	NumOfAttempts     int          `gorm:"not null; size:255"`
+	Deadline          time.Time    `gorm:"<-, uniqueIndex"`
+	AssignmentCreated time.Time    `gorm:"autoCreateTime"`
+	AssignmentUpdated time.Time    `gorm:"autoUpdateTime"`
+	AccountEmail      string       `gorm:"not null; size:255"`
+	Account           Account      `gorm:"foreignKey:AccountEmail; references:Email; constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Submissions       []Submission `gorm:"foreignKey:AssignmentID; references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+}
+
+type Submission struct {
 	ID                string    `gorm:"<-:create; primaryKey; size:255; default:(uuid())"`
-	Name              string    `gorm:"not null; size:255"`
-	Points            int       `gorm:"not null; size:4"`
-	NumOfAttempts     int       `gorm:"not null; size:255"`
-	Deadline          time.Time `gorm:"<-, uniqueIndex"`
-	AssignmentCreated time.Time `gorm:"autoCreateTime"`
-	AssignmentUpdated time.Time `gorm:"autoUpdateTime"`
-	AccountEmail      string    `gorm:"not null; size:255"`
-	Account           Account   `gorm:"foreignKey:AccountEmail; references:Email"`
+	SubmissionURL     string    `gorm:"not null; size:255"`
+	SubmissionDate    time.Time `gorm:"autoCreateTime"`
+	SubmissionUpdated time.Time `gorm:"autoUpdateTime"`
+	AssignmentID      string    `gorm:"not null; size:255"`
+	AccountID         string    `gorm:"not null; size:255"`
+	Account           Account   `gorm:"foreignKey:AccountID; references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
