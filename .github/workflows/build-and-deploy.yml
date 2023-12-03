@@ -45,7 +45,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ vars.DB_NAME }}
           LOG_FILE_PATH: assessment-application.log
-      - name: Configure AWS credentials
+      - name: Configure dev AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -67,5 +67,60 @@ jobs:
 
       - name: Build Artifact
         run: "packer build -var-file=aws-debian.auto.pkrvars.hcl -color=false -on-error=abort ./aws-debian.pkr.hcl"
+      - name: Get AMI
+        run: AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) ; echo $AMI_ID
+
+  refresh-instances:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      EC2_LAUNCH_TEMPLATE: ${{ vars.EC2_LAUNCH_TEMPLATE }}
+      EC2_AUTOSCALING_GROUP: ${{ vars.EC2_AUTOSCALING_GROUP }}
+    steps:
+      - name: Configure demo AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEMO_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEMO_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: get the latest AMI id
+        run: |
+          AMI_ID=$(aws ec2 describe-images \
+          --filters "Name=name,Values=csye6225-debian-instance-ami*" \
+          --query "Images | sort_by(@, &CreationDate) | [-1].ImageId" \
+          --output text)
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+      - name: print env variables
+        run: |
+          echo "EC2_LAUNCH_TEMPLATE: $EC2_LAUNCH_TEMPLATE"
+          echo "EC2_AUTOSCALING_GROUP: $EC2_AUTOSCALING_GROUP"
+          echo "AMI_ID: $AMI_ID"
+      - name: create new launch template version
+        run: |
+          aws ec2 create-launch-template-version \
+          --launch-template-name $EC2_LAUNCH_TEMPLATE \
+          --launch-template-data ImageId=$AMI_ID \
+          --source-version 1
+      - name: refresh instances
+        run: |
+          aws autoscaling start-instance-refresh \
+          --auto-scaling-group-name $EC2_AUTOSCALING_GROUP \
+      - name: wait on instance refresh completion
+        run: |
+          asg_name="<your-auto-scaling-group-name>"
+          while true; do
+            refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ env.EC2_AUTOSCALING_GROUP }} --query 'InstanceRefreshes[0].Status' --output text)
+                
+            if [ "$refresh_status" == "Successful" ]; then
+                echo "Instance refresh completed successfully."
+                break
+            elif [ "$refresh_status" == "Failed" ]; then
+                echo "Instance refresh failed."
+                exit 1
+            else
+                echo "Instance refresh in progress..."
+                sleep 30
+            fi
+          done
 
 

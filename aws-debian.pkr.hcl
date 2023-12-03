@@ -69,5 +69,9 @@ build {
     environment_vars = var.shell_environment_vars
     script           = var.script_path
   }
-}
 
+  post-processor "manifest" {
+    output = "manifest.json"
+    strip_path = true
+  }
+}

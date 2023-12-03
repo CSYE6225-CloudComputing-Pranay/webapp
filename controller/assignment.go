@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm/clause"
 	"io"
 	"log"
@@ -356,6 +357,56 @@ func SubmitAssignment(context *gin.Context) {
 	return
 }
 
+func CreateAccount(context *gin.Context) {
+
+	var request AccountRequest
+
+	if len(context.Request.URL.Query()) != 0 {
+		zap.L().Error("Request contains unwanted request query parameters", zap.String("user-mail", context.GetString("email")),
+			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path), zap.String("request-query", context.Request.URL.RawQuery))
+		context.Status(http.StatusBadRequest)
+		return
+	}
+
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	if err != nil {
+		context.Status(http.StatusServiceUnavailable)
+		return
+	}
+
+	id := uuid.New().String()
+
+	account := database.Account{
+		ID:        id,
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Password:  string(hashedPassword),
+		Email:     request.Email,
+	}
+
+	if err := database.Database.Create(&account).Error; err != nil {
+		context.Status(http.StatusServiceUnavailable)
+		return
+	}
+
+	accountResponse := AccountResponse{
+		ID:             account.ID,
+		FirstName:      account.FirstName,
+		LastName:       account.LastName,
+		Email:          account.Email,
+		AccountCreated: account.AccountCreated,
+		AccountUpdated: account.AccountUpdated,
+	}
+
+	context.JSON(http.StatusCreated, accountResponse)
+	return
+}
+
 func prepareSubmissionMessage(status string, account database.Account, request SubmitRequest, assignmentID string, count int64) (string, string) {
 	topicARN := os.Getenv("SUBMISSION_TOPIC_ARN")
 	submissionMessage := SubmissionMessage{
@@ -415,12 +466,13 @@ func isValidZIP(url string) (string, bool) {
 }
 
 type SubmissionMessage struct {
-	Status        string `json:"status"`
-	SubmissionURL string `json:"submissionUrl"`
-	UserEmail     string `json:"userEmail"`
-	AssignmentID  string `json:"assignmentId"`
-	AccountID     string `json:"account_id"`
-	FirstName     string `json:"first_name"`
-	LastName      string `json:"last_name"`
-	Count         int64  `json:"attempt"`
+	Status         string `json:"status"`
+	SubmissionURL  string `json:"submissionUrl"`
+	UserEmail      string `json:"userEmail"`
+	AssignmentName string `json:"assignmentName"`
+	AssignmentID   string `json:"assignmentId"`
+	AccountID      string `json:"account_id"`
+	FirstName      string `json:"first_name"`
+	LastName       string `json:"last_name"`
+	Count          int64  `json:"attempt"`
 }
