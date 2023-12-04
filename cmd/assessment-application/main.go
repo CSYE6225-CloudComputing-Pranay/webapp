@@ -75,7 +75,6 @@ func serveApplication() {
 	privateRoutes.PUT("/:assignmentID", controller.UpdateAssignment)
 	privateRoutes.DELETE("/:assignmentID", controller.DeleteAssignment)
 	privateRoutes.POST("/:assignmentID/submission", controller.SubmitAssignment)
-	privateRoutes.GET("/account", controller.CreateAccount)
 
 	zap.L().Info("Starting server with Gin framework")
 
