@@ -35,4 +35,8 @@ A project for the course "Network structures and cloud computing" that is writte
 - Run "go build webapp/cmd/main" command from project directory to build the project
 - Run "cd ./test ; go test -run TestHealthTestSuite ; cd .." command from project directory to run the integration test
 - Now, run "go run webapp/cmd/main" command from project directory to deploy the project
+- command to import the certificate from Local to AWS Certificate Manager:
+  aws acm import-certificate --profile demo \
+  --certificate fileb://demo_pranaykasavaraju_me.crt \
+  --private-key fileb://../private.key
 
