@@ -288,6 +288,11 @@ func SubmitAssignment(context *gin.Context) {
 			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path))
 	}
 
+	if err := database.Database.Where("id=?", assignmentID).First(&assignment).Error; err != nil {
+		context.Status(http.StatusNotFound)
+		return
+	}
+
 	if time.Now().UTC().After(assignment.Deadline) {
 		zap.L().Error("User attempted submission after the deadline", zap.String("user-mail", context.GetString("email")), zap.String("assignment-id", assignmentID), zap.String("account-id", accountID),
 			zap.String("request-method", context.Request.Method), zap.String("request-path", context.Request.URL.Path))
