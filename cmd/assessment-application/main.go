@@ -67,7 +67,7 @@ func serveApplication() {
 	publicRoutes := router.Group("")
 	publicRoutes.GET("/healthz", controller.Health)
 
-	privateRoutes := router.Group("/v1/assignments")
+	privateRoutes := router.Group("/v3/assignments")
 	privateRoutes.Use(controller.BasicAuth())
 	privateRoutes.POST("", controller.CreateAssignment)
 	privateRoutes.GET("", controller.GetAllAssignments)
