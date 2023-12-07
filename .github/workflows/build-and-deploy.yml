@@ -71,9 +71,9 @@ jobs:
         run: "packer build -var-file=aws-debian.auto.pkrvars.hcl -color=false -on-error=abort ./aws-debian.pkr.hcl"
       - name: Get AMI
         id: get-ami
-        run: AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) ; echo "AMI_ID = $AMI_ID">> "$GITHUB_OUTPUT"
+        run: AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) ; echo "AMI_ID=$AMI_ID">> "$GITHUB_OUTPUT"
       - name: Print AMI ID
-        run: echo "AMI_ID = ${{ steps.get-ami.outputs.AMI_ID }}"
+        run: echo "AMI_ID=${{ steps.get-ami.outputs.AMI_ID }}"
   refresh-instances:
     needs: build
     runs-on: ubuntu-latest
